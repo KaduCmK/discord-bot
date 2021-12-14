@@ -32,7 +32,12 @@ def search(query):
 async def brota(ctx):
     member_voice = ctx.author.voice.channel
     await member_voice.connect()
+    await ctx.send('brotei no ' + str(ctx.author.voice.channel))
 
+@client.command()
+async def vaza(ctx):
+    await ctx.voice_client.disconnect()
+    await ctx.send('fui de base')
 
 @client.command()
 async def toca(ctx, *, query):
@@ -56,12 +61,12 @@ async def toca(ctx, *, query):
 
 @client.command()
 async def pausa(ctx):
-    await ctx.voice_client.pause()
+    ctx.voice_client.pause()
     await ctx.send('pausado')
 
 @client.command()
 async def continua(ctx):
-    await ctx.voice_cliente.resume()
+    ctx.voice_client.resume()
     await ctx.send('resumindo')
 
 # ===============================================================================================
@@ -106,6 +111,13 @@ async def on_message(message):
     if mensagem.startswith('!limpar'):
         qtd = int(mensagem.split(' ')[1])
         await message.channel.purge(limit=qtd+1)
+        return
+
+    if mensagem.lower() == 'eu sou cria?':
+        if usuario == 'KaduCmK':
+            await message.channel.send('esse dai é cria de vdd')
+        else:
+            await message.channel.send('nada a ver isso dai')
         return
     
     await client.process_commands(message)
