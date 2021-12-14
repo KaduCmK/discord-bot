@@ -7,7 +7,7 @@ from youtube_dl import YoutubeDL
 import requests
 from random import randint
 
-token = 'OTIwMTUxMDE3ODY0MTgzODM4.YbgLag.S4sQcZuFbqVsTDE9i5bPshTVzRw'
+token = ''
 client = commands.Bot(command_prefix='!')
 
 @client.event
