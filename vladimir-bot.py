@@ -1,4 +1,4 @@
-
+import os
 import time
 import discord
 from discord import FFmpegPCMAudio
@@ -7,8 +7,10 @@ from discord.ext import commands
 from youtube_dl import YoutubeDL
 import requests
 import random
-from random import randint
+from dotenv import load_dotenv
 
+load_dotenv()
+token = os.environ['TOKEN']
 client = commands.Bot(command_prefix='!')
 
 @client.event
@@ -149,5 +151,5 @@ async def on_message(message):
 # ===============================================================================================
 
 
-client.run()
+client.run(token)
 
