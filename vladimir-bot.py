@@ -9,7 +9,6 @@ import requests
 import random
 from random import randint
 
-token = 'OTIwMTUxMDE3ODY0MTgzODM4.YbgLag.djX5c6sdesD4v0ChamdCNbCySL4'
 client = commands.Bot(command_prefix='!')
 
 @client.event
@@ -150,5 +149,5 @@ async def on_message(message):
 # ===============================================================================================
 
 
-client.run(token)
+client.run()
 
