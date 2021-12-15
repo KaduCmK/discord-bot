@@ -71,6 +71,9 @@ async def continua(ctx):
     ctx.voice_client.resume()
     await ctx.send('resumindo')
 
+@client.command()
+async def volume(ctx, vol):
+    pass
 # ===============================================================================================
 
 
