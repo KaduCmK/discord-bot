@@ -77,12 +77,13 @@ async def continua(ctx):
 # utilitarios
 # ===============================================================================================
 @client.command()   # comando p trocar o tema do servidor - uso: !trocartema [temas SEM ESPAÇO separados por ponto e virgula]
-async def trocartema(ctx, temas):
-    lista = temas.split(';')
+async def trocartema(ctx, *, temas):
+    lista = temas.split(', ')
     await ctx.send('sorteando entre os temas:')
 
     for i in range(len(lista)):
         await ctx.send(lista[i])
+        time.sleep(1)
     
     sort = random.randrange(len(lista))
     time.sleep(1)
