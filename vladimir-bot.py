@@ -1,13 +1,15 @@
 
+import time
 import discord
 from discord import FFmpegPCMAudio
 from discord import client
 from discord.ext import commands
 from youtube_dl import YoutubeDL
 import requests
+import random
 from random import randint
 
-token = ''
+token = 'OTIwMTUxMDE3ODY0MTgzODM4.YbgLag.djX5c6sdesD4v0ChamdCNbCySL4'
 client = commands.Bot(command_prefix='!')
 
 @client.event
@@ -58,7 +60,6 @@ async def toca(ctx, *, query):
             client_voice.play(FFmpegPCMAudio(source))
             client_voice.is_playing()
 
-
 @client.command()
 async def pausa(ctx):
     ctx.voice_client.pause()
@@ -70,6 +71,25 @@ async def continua(ctx):
     await ctx.send('resumindo')
 
 # ===============================================================================================
+
+
+# utilitarios
+# ===============================================================================================
+@client.command()   # comando p trocar o tema do servidor - uso: !trocartema [temas SEM ESPAÇO separados por ponto e virgula]
+async def trocartema(ctx, temas):
+    lista = temas.split(';')
+    await ctx.send('sorteando entre os temas:')
+
+    for i in range(len(lista)):
+        await ctx.send(lista[i])
+    
+    sort = random.randrange(len(lista))
+    time.sleep(1)
+    await ctx.send('---------------------------')
+    await ctx.send('tema escolhido: ' + lista[sort])
+
+# ===============================================================================================
+
 
 
 # Responder mensagens
@@ -119,9 +139,16 @@ async def on_message(message):
         else:
             await message.channel.send('nada a ver isso dai')
         return
+
+    if mensagem.lower() == '!kasama' or mensagem.lower() == '!boludo':
+        await message.channel.send('pega a visao')
+        await message.channel.send(file=discord.File('kasama.png'))
+        
     
     await client.process_commands(message)
+
 # ===============================================================================================
 
 
 client.run(token)
+
