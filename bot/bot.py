@@ -1,84 +1,78 @@
-import os
-import time
-import discord
-from discord import FFmpegPCMAudio
-from discord import client
-from discord.ext import commands
-from youtube_dl import YoutubeDL
-import requests
 import random
-from dotenv import load_dotenv
+import time
+from pathlib import Path
 
-load_dotenv()
-token = os.environ['TOKEN']
-client = commands.Bot(command_prefix='!')
-
-@client.event
-async def on_ready():
-    print('Logado como {0.user}'.format(client))
+import discord
+from discord.ext import commands
 
 
 # gerenciamento de musica
 # ===============================================================================================
-def search(query):
-    with YoutubeDL({'format': 'bestaudio', 'noplaylist': 'True'}) as ydl:
-        try:
-            requests.get(query)
-        except:
-            info = ydl.extract_info(f"ytsearch:{query}", download=False)['entries'][0]
-        else:
-            info = ydl.extract_info(query, download=False)
-    return (info, info['formats'][0]['url'])
+class MusicBot(commands.Bot):
+    def __init__(self):
+        self._cogs = [p.stem for p in Path('.').glob('.bot/cogs/*.py')]
+        super().__init__(command_prefix=self.prefix, case_insensitive=True)
 
 
-@client.command()
-async def brota(ctx):
-    member_voice = ctx.author.voice.channel
-    await member_voice.connect()
-    await ctx.send('brotei no ' + str(ctx.author.voice.channel))
+    def setup(self):
+        print('configurando...')
 
-@client.command()
-async def vaza(ctx):
-    await ctx.voice_client.disconnect()
-    await ctx.send('fui de base')
+        for cog in self._cogs:
+            self.load_extension(f'bot.cogs.{cog}')
+            print(f" `{cog}` cog carregado.")
+    
+        print('configuração concluída')
 
-@client.command()
-async def toca(ctx, *, query):
-    member_voice = ctx.author.voice
-    await ctx.send('Carregando...')
-    if member_voice and member_voice.channel:
-        if ctx.voice_client:
-            client_voice = ctx.voice_client
-            video, source = search(query)
-            await ctx.send(f"Tocando: {video['title']}")
-            client_voice.play(FFmpegPCMAudio(source))
-            client_voice.is_playing()
-        else:
-            await member_voice.channel.connect()
-            client_voice = ctx.voice_client
-            video, source = search(query)
-            await ctx.send(f"Tocando: {video['title']}")
-            client_voice.play(FFmpegPCMAudio(source))
-            client_voice.is_playing()
+    def run(self):
+        self.setup()
 
-@client.command()
-async def pausa(ctx):
-    ctx.voice_client.pause()
-    await ctx.send('pausado')
+        with open('data/token.0', 'r', encoding='utf-8') as f:
+            TOKEN = f.read()
 
-@client.command()
-async def continua(ctx):
-    ctx.voice_client.resume()
-    await ctx.send('resumindo')
+        print('rodando bot...')
+        super().run(TOKEN, reconnect=True)
 
-@client.command()
-async def volume(ctx, vol):
-    pass
+    async def shutdown(self):
+        print('encerrando conexão...')
+        await super().close()
+
+    async def close(self):
+        print('Encerrando por input do teclado...')
+        await self.shutdown()
+
+    async def on_connect(self):
+        print(f'Conectado ao discord (latência: {self.latency*1000:,.0f} ms)')
+    
+    async def on_resumed(self):
+        print('bot resumido')
+
+    async def on_disconnect(self):
+        print('bot desconectado')
+    
+    async def on_ready(self):
+        self.client_id = (await self.application_info()).id
+        print('bot pronto')
+
+    async def prefix(self, bot, msg):
+        return commands.when_mentioned_or('--')(bot, msg)
+
+    async def process_commands(self, msg):
+        ctx = await self.get_context(msg, cls=commands.Context)
+
+        if ctx.command is not None:
+            await self.invoke(ctx)
+
+    async def on_message(self, msg):
+        if not msg.author.bot:
+            await self.process_commands(msg)
+            
+
 # ===============================================================================================
 
 
 # utilitarios
 # ===============================================================================================
+'''
 @client.command()   # comando p trocar o tema do servidor - uso: !trocartema [temas separados por virgula]
 async def trocartema(ctx, *, temas):
     lista = temas.split(', ')
@@ -92,13 +86,14 @@ async def trocartema(ctx, *, temas):
     time.sleep(1)
     await ctx.send('---------------------------')
     await ctx.send('tema escolhido: ' + lista[sort])
-
+'''
 # ===============================================================================================
 
 
 
 # Responder mensagens
 # ===============================================================================================
+'''
 @client.event
 async def on_message(message):
     usuario = str(message.author).split('#')[0]
@@ -151,9 +146,5 @@ async def on_message(message):
         
     
     await client.process_commands(message)
-
+'''
 # ===============================================================================================
-
-
-client.run(token)
-
