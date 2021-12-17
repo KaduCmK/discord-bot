@@ -1,2 +1,5 @@
 
 .env
+data/
+jdk-17.0.1/
+bot/
